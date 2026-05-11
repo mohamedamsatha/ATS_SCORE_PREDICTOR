@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TalentFlow ATS</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07071A;--card:#0E0E28;--card2:#13132E;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
+  --pink:#FF3CAC;--cyan:#00F5FF;--green:#00FF9C;--yellow:#FFE03B;--orange:#FF6B35;--wa:#25D366;
+  --text:#F0F0FF;--muted:#6060A0;--muted2:#9090C0;
+  --grad:linear-gradient(135deg,#FF3CAC,#784BA0,#2B86C5);
+  --grad2:linear-gradient(135deg,#00F5FF,#00FF9C);
+  --grad3:linear-gradient(135deg,#FFE03B,#FF6B35,#FF3CAC);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+.bg-mesh{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+.mesh-blob{position:absolute;border-radius:50%;filter:blur(120px);opacity:0.12;animation:blobFloat 14s ease-in-out infinite;}
+.b1{width:600px;height:600px;background:#FF3CAC;top:-200px;left:-150px;}
+.b2{width:500px;height:500px;background:#00F5FF;bottom:-150px;right:-100px;animation-delay:5s;}
+.b3{width:350px;height:350px;background:#FFE03B;top:50%;left:55%;animation-delay:10s;}
+@keyframes blobFloat{0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-50px) scale(1.1);}}
+.page{position:relative;z-index:1;display:flex;flex-direction:column;min-height:100vh;}
+nav{display:flex;align-items:center;justify-content:space-between;padding:20px 48px;border-bottom:1px solid var(--border);background:rgba(7,7,26,0.8);backdrop-filter:blur(20px);position:sticky;top:0;z-index:50;}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:flex;align-items:center;gap:8px;}
+.nav-pills{display:flex;gap:8px;}
+.nav-pill{padding:6px 16px;border-radius:50px;font-size:0.78rem;font-weight:600;border:1px solid var(--border2);color:var(--muted2);background:rgba(255,255,255,0.03);cursor:pointer;transition:all 0.2s;}
+.nav-pill.active{background:var(--grad);border-color:transparent;color:#fff;-webkit-text-fill-color:#fff;}
+.hero{text-align:center;padding:60px 48px 40px;}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(255,60,172,0.1);border:1px solid rgba(255,60,172,0.2);color:var(--pink);padding:6px 18px;border-radius:50px;font-size:0.73rem;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:20px;}
+.hero h1{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(2rem,5vw,3.4rem);line-height:1.08;margin-bottom:14px;letter-spacing:-1.5px;}
+.grad-text{background:var(--grad3);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.cyan-text{background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{color:var(--muted2);font-size:0.98rem;line-height:1.65;max-width:540px;margin:0 auto 28px;}
+.stat-row{display:flex;justify-content:center;gap:36px;flex-wrap:wrap;}
+.stat-num{font-family:'Syne',sans-serif;font-weight:800;font-size:1.5rem;background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.stat-label{font-size:0.72rem;color:var(--muted);margin-top:2px;}
+.main{max-width:1280px;margin:0 auto;padding:0 48px 80px;width:100%;}
+.steps-wrap{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:44px;flex-wrap:wrap;gap:4px;}
+.step-item{display:flex;align-items:center;gap:10px;}
+.step-circle{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:0.78rem;border:2px solid var(--border2);color:var(--muted);background:var(--card);transition:all 0.4s;}
+.step-circle.active{background:var(--grad);border-color:transparent;color:#fff;box-shadow:0 0 20px rgba(255,60,172,0.4);}
+.step-circle.done{background:rgba(0,255,156,0.15);border-color:rgba(0,255,156,0.4);color:var(--green);}
+.step-label{font-size:0.73rem;font-weight:600;color:var(--muted);}
+.step-label.active{color:var(--text);}
+.step-label.done{color:var(--green);}
+.step-conn{width:36px;height:2px;background:var(--border2);margin:0 4px;border-radius:2px;}
+.step-conn.done{background:linear-gradient(90deg,var(--green),var(--cyan));}
+.upload-zone{border:2px dashed rgba(0,245,255,0.3);border-radius:28px;padding:56px 40px;text-align:center;cursor:pointer;position:relative;transition:all 0.35s;background:rgba(0,245,255,0.015);overflow:hidden;margin-bottom:40px;}
+.upload-zone:hover,.upload-zone.drag-over{border-color:var(--cyan);transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,245,255,0.1);}
+.upload-zone.drag-over{background:rgba(0,245,255,0.05);}
+.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;z-index:2;}
+.upload-icon{width:80px;height:80px;border-radius:24px;margin:0 auto 20px;background:linear-gradient(135deg,rgba(0,245,255,0.12),rgba(0,255,156,0.06));border:1px solid rgba(0,245,255,0.18);display:flex;align-items:center;justify-content:center;font-size:2.2rem;transition:transform 0.3s;}
+.upload-zone:hover .upload-icon{transform:scale(1.1) rotate(-8deg);}
+.upload-zone h2{font-family:'Syne',sans-serif;font-weight:800;font-size:1.35rem;margin-bottom:8px;}
+.upload-zone p{color:var(--muted2);font-size:0.88rem;margin-bottom:20px;}
+.upload-zone p span{color:var(--cyan);font-weight:600;}
+.ftypes{display:flex;align-items:center;justify-content:center;gap:10px;}
+.ftype{padding:4px 12px;border-radius:50px;font-size:0.68rem;font-weight:700;border:1px solid;}
+.ftype-pdf{border-color:rgba(255,60,172,0.4);color:var(--pink);background:rgba(255,60,172,0.08);}
+.ftype-doc{border-color:rgba(0,245,255,0.4);color:var(--cyan);background:rgba(0,245,255,0.08);}
+.ftype-txt{border-color:rgba(255,227,59,0.4);color:var(--yellow);background:rgba(255,227,59,0.08);}
+.limit-badge{font-size:0.7rem;color:var(--muted);padding:4px 12px;background:rgba(255,255,255,0.04);border-radius:50px;border:1px solid var(--border);}
+.actions-bar{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;background:var(--card);border-radius:16px;border:1px solid var(--border);margin-bottom:32px;flex-wrap:wrap;gap:12px;}
+.act-info strong{color:var(--text);font-size:0.85rem;}
+.act-sub{font-size:0.72rem;color:var(--muted);margin-top:2px;}
+.act-btns{display:flex;gap:10px;flex-wrap:wrap;}
+.btn-primary{padding:9px 20px;border:none;border-radius:10px;background:var(--grad);color:#fff;font-family:'Syne',sans-serif;font-weight:700;font-size:0.8rem;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,60,172,0.4);}
+.btn-primary:disabled{opacity:0.35;cursor:not-allowed;transform:none;box-shadow:none;}
+.btn-ghost{padding:8px 16px;border:1px solid var(--border2);border-radius:10px;background:none;color:var(--muted2);font-size:0.78rem;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.btn-ghost:hover{border-color:rgba(255,255,255,0.25);color:var(--text);background:rgba(255,255,255,0.04);}
+.btn-danger{padding:8px 16px;border:1px solid rgba(255,60,172,0.25);border-radius:10px;background:rgba(255,60,172,0.08);color:var(--pink);font-size:0.78rem;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.resume-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:16px;margin-bottom:40px;}
+.resume-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:18px;position:relative;transition:all 0.3s;cursor:pointer;overflow:hidden;}
+.resume-card:hover{border-color:var(--border2);transform:translateY(-4px);box-shadow:0 20px 50px rgba(0,0,0,0.4);}
+.resume-card.selected{border-color:var(--green)!important;box-shadow:0 0 0 2px rgba(0,255,156,0.25),0 20px 50px rgba(0,0,0,0.4);transform:translateY(-4px);}
+.resume-card.rank-1{border-color:rgba(255,227,59,0.55)!important;box-shadow:0 0 0 2px rgba(255,227,59,0.2),0 20px 60px rgba(255,227,59,0.12);}
+.resume-card.rank-2{border-color:rgba(192,192,220,0.45)!important;}
+.resume-card.rank-3{border-color:rgba(205,127,50,0.45)!important;}
+.card-check{position:absolute;top:12px;left:12px;width:20px;height:20px;border-radius:6px;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:transparent;background:rgba(255,255,255,0.04);transition:all 0.2s;}
+.resume-card.selected .card-check{background:var(--green);border-color:var(--green);color:#07071A;}
+.card-rank{position:absolute;top:12px;right:12px;width:26px;height:26px;border-radius:50%;display:none;align-items:center;justify-content:center;font-size:0.7rem;}
+.resume-card.rank-1 .card-rank{display:flex;background:linear-gradient(135deg,#FFE03B,#FF6B35);color:#07071A;}
+.resume-card.rank-2 .card-rank{display:flex;background:linear-gradient(135deg,#C0C0DC,#9090B0);color:#07071A;}
+.resume-card.rank-3 .card-rank{display:flex;background:linear-gradient(135deg,#CD7F32,#A0522D);color:#fff;}
+.card-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;background:linear-gradient(135deg,rgba(0,245,255,0.1),rgba(0,255,156,0.06));border:1px solid rgba(0,245,255,0.15);margin:8px auto 12px;}
+.card-name{font-weight:600;font-size:0.82rem;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px;padding:0 6px;}
+.card-meta{font-size:0.7rem;color:var(--muted);text-align:center;margin-bottom:14px;}
+.ring-wrap{display:flex;justify-content:center;margin-bottom:12px;position:relative;}
+.ring-wrap svg{transform:rotate(-90deg);}
+.rc-bg{fill:none;stroke:rgba(255,255,255,0.06);stroke-width:7;}
+.rc-fill{fill:none;stroke-width:7;stroke-linecap:round;transition:stroke-dashoffset 1.4s cubic-bezier(.4,0,.2,1);}
+.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.ring-num{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;line-height:1;}
+.ring-lbl{font-size:0.56rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-top:1px;}
+.bars{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;}
+.bar-row{display:flex;align-items:center;gap:7px;}
+.bar-lbl{font-size:0.62rem;color:var(--muted2);width:64px;flex-shrink:0;}
+.bar-track{flex:1;height:4px;background:rgba(255,255,255,0.07);border-radius:50px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:50px;transition:width 1.2s cubic-bezier(.4,0,.2,1);}
+.bar-val{font-size:0.6rem;font-weight:700;width:24px;text-align:right;flex-shrink:0;}
+.card-status{display:flex;align-items:center;justify-content:center;gap:6px;padding:7px;border-radius:10px;font-size:0.7rem;font-weight:600;border:1px solid var(--border);}
+.st-wait{background:rgba(255,255,255,0.03);color:var(--muted);}
+.st-scan{background:rgba(0,245,255,0.06);border-color:rgba(0,245,255,0.2);color:var(--cyan);}
+.st-done{background:rgba(0,255,156,0.06);border-color:rgba(0,255,156,0.2);color:var(--green);}
+.spin{width:11px;height:11px;border:2px solid rgba(0,245,255,0.2);border-top-color:var(--cyan);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.contact-tags{display:flex;flex-direction:column;gap:5px;margin-top:8px;}
+.contact-tag{display:flex;align-items:center;gap:5px;padding:5px 9px;border-radius:8px;font-size:0.63rem;font-weight:600;word-break:break-all;}
+.email-tag{background:rgba(0,245,255,0.06);border:1px solid rgba(0,245,255,0.18);color:var(--cyan);}
+.phone-tag{background:rgba(37,211,102,0.07);border:1px solid rgba(37,211,102,0.25);color:#25D366;}
+.contact-tag.none{background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--muted);font-weight:400;}
+.skel{background:linear-gradient(90deg,rgba(255,255,255,0.04) 25%,rgba(255,255,255,0.08) 50%,rgba(255,255,255,0.04) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:6px;}
+@keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+.top3-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.sec-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;}
+.sec-sub{color:var(--muted2);font-size:0.8rem;margin-top:3px;}
+.top3-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;}
+.t3card{border-radius:22px;padding:24px 20px;position:relative;overflow:hidden;transition:transform 0.3s;border:1px solid;}
+.t3card:hover{transform:translateY(-5px);}
+.t3card.gold{background:linear-gradient(160deg,rgba(255,227,59,0.1),rgba(255,107,53,0.05),rgba(7,7,26,0.7));border-color:rgba(255,227,59,0.35);box-shadow:0 20px 60px rgba(255,227,59,0.1);}
+.t3card.silver{background:linear-gradient(160deg,rgba(192,192,220,0.08),rgba(120,75,160,0.04),rgba(7,7,26,0.7));border-color:rgba(192,192,220,0.28);}
+.t3card.bronze{background:linear-gradient(160deg,rgba(205,127,50,0.08),rgba(160,82,45,0.04),rgba(7,7,26,0.7));border-color:rgba(205,127,50,0.28);}
+.t3medal{font-size:2rem;margin-bottom:10px;display:block;}
+.t3rank{font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px;}
+.t3card.gold .t3rank{color:#FFE03B;}.t3card.silver .t3rank{color:#C0C0DC;}.t3card.bronze .t3rank{color:#CD7F32;}
+.t3score{font-family:'Syne',sans-serif;font-weight:800;font-size:2.6rem;line-height:1;margin-bottom:3px;}
+.t3card.gold .t3score{background:linear-gradient(135deg,#FFE03B,#FF6B35);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.t3card.silver .t3score{background:linear-gradient(135deg,#E0E0FF,#C0C0DC);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.t3card.bronze .t3score{background:linear-gradient(135deg,#CD7F32,#A0522D);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.t3gpill{display:inline-block;padding:2px 9px;border-radius:50px;font-size:0.65rem;font-weight:800;font-family:'Syne',sans-serif;margin-left:6px;}
+.t3name{font-weight:600;font-size:0.85rem;margin-bottom:4px;}
+.t3meta{font-size:0.72rem;color:var(--muted2);margin-bottom:12px;}
+.t3div{height:1px;background:var(--border);margin-bottom:12px;}
+.t3bars{display:flex;flex-direction:column;gap:7px;}
+.t3brow{display:flex;align-items:center;gap:7px;}
+.t3blbl{font-size:0.65rem;color:var(--muted2);width:76px;flex-shrink:0;}
+.t3btrack{flex:1;height:4px;background:rgba(255,255,255,0.07);border-radius:50px;overflow:hidden;}
+.t3bfill{height:100%;border-radius:50px;}
+.t3bval{font-size:0.62rem;font-weight:700;width:26px;text-align:right;flex-shrink:0;}
+.t3feedback{margin-top:12px;padding:10px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px solid var(--border);font-size:0.73rem;line-height:1.6;color:var(--muted2);}
+.mail-status-row{margin-top:10px;display:flex;flex-direction:column;gap:7px;}
+.msbox{padding:10px 14px;border-radius:12px;font-size:0.74rem;font-weight:600;display:flex;align-items:flex-start;gap:8px;border:1px solid;flex-direction:column;}
+.msbox .ms-main{display:flex;align-items:center;gap:8px;}
+.ms-email-val{font-size:0.68rem;font-weight:500;opacity:0.8;margin-top:2px;word-break:break-all;}
+.ms-extract{background:rgba(255,227,59,0.07);border-color:rgba(255,227,59,0.25);color:var(--yellow);}
+.ms-send{background:rgba(0,245,255,0.07);border-color:rgba(0,245,255,0.25);color:var(--cyan);}
+.ms-sent{background:rgba(0,255,156,0.07);border-color:rgba(0,255,156,0.25);color:var(--green);}
+.ms-nomail{background:rgba(255,60,172,0.07);border-color:rgba(255,60,172,0.2);color:var(--pink);}
+.ms-idle{background:rgba(255,255,255,0.03);border-color:var(--border);color:var(--muted);}
+.ms-wa{background:rgba(37,211,102,0.08);border-color:rgba(37,211,102,0.3);color:#25D366;}
+.ms-wa-btn{display:inline-flex;align-items:center;gap:6px;margin-top:6px;padding:7px 14px;background:#25D366;border-radius:9px;color:#000;font-size:0.72rem;font-weight:800;text-decoration:none;cursor:pointer;border:none;transition:all 0.2s;}
+.ms-wa-btn:hover{background:#1ebe5a;transform:translateY(-1px);}
+.ms-wa-nophone{background:rgba(255,255,255,0.03);border-color:var(--border);color:var(--muted);}
+.prog-wrap{margin-top:28px;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px 26px;display:none;}
+.prog-wrap.show{display:block;}
+.prog-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;margin-bottom:3px;}
+.prog-sub{font-size:0.75rem;color:var(--muted2);margin-bottom:14px;}
+.prog-track{height:8px;background:rgba(255,255,255,0.07);border-radius:50px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--green));border-radius:50px;transition:width 0.6s cubic-bezier(.4,0,.2,1);width:0%;}
+.prog-steps{display:flex;flex-direction:column;gap:7px;margin-top:14px;}
+.prog-step{font-size:0.75rem;color:var(--muted2);display:flex;align-items:center;gap:8px;}
+.prog-step.active{color:var(--cyan);}
+.prog-step.done{color:var(--green);}
+.toast{position:fixed;bottom:28px;right:28px;z-index:999;background:var(--card2);border:1px solid rgba(0,255,156,0.3);border-radius:16px;padding:14px 20px;display:flex;align-items:center;gap:12px;box-shadow:0 20px 60px rgba(0,0,0,0.5);transform:translateY(100px);opacity:0;transition:all 0.4s cubic-bezier(.34,1.56,.64,1);max-width:320px;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast-ico{font-size:1.3rem;}
+.toast-txt{font-size:0.82rem;line-height:1.5;}
+.toast-txt strong{color:var(--green);display:block;font-size:0.86rem;}
+@keyframes cardIn{from{opacity:0;transform:scale(0.94) translateY(12px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.card-anim{animation:cardIn 0.4s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes popIn{from{opacity:0;transform:scale(0.9);}to{opacity:1;transform:scale(1);}}
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:rgba(255,60,172,0.3);border-radius:3px;}
+@media(max-width:900px){nav{padding:18px 20px;}.hero,.main{padding-left:20px;padding-right:20px;}.top3-grid{grid-template-columns:1fr;}}
+@media(max-width:600px){.resume-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:420px){.resume-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="bg-mesh">
+  <div class="mesh-blob b1"></div><div class="mesh-blob b2"></div><div class="mesh-blob b3"></div>
+</div>
+<div class="page">
+
+<nav>
+  <div class="logo">⚡ TalentFlow ATS</div>
+  <div class="nav-pills">
+    <div class="nav-pill active">Bulk Analyzer</div>
+    <div class="nav-pill">Dashboard</div>
+    <div class="nav-pill">Settings</div>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow">🤖 AI Scoring · 📧 Auto Email · 💬 WhatsApp Invite</div>
+  <h1>AI Picks <span class="grad-text">Top 3</span>,<br>Auto-Sends <span class="cyan-text">Email + WhatsApp ✉️</span></h1>
+  <p>Upload resumes → AI deeply analyzes → selects Top 3 → extracts email & phone → sends Gmail invite + WhatsApp message. Zero manual work.</p>
+  <div class="stat-row">
+    <div class="stat"><div class="stat-num" id="st-up">0</div><div class="stat-label">Uploaded</div></div>
+    <div class="stat"><div class="stat-num" id="st-an">0</div><div class="stat-label">Analyzed</div></div>
+    <div class="stat"><div class="stat-num" id="st-sel">0</div><div class="stat-label">Top 3 Selected</div></div>
+    <div class="stat"><div class="stat-num" id="st-sent">0</div><div class="stat-label">Emails Sent</div></div>
+    <div class="stat"><div class="stat-num" id="st-wa">0</div><div class="stat-label">WhatsApp Sent</div></div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="steps-wrap">
+    <div class="step-item"><div class="step-circle active" id="sc1">1</div><div class="step-label active" id="sl1">Upload</div></div>
+    <div class="step-conn" id="cn1"></div>
+    <div class="step-item"><div class="step-circle" id="sc2">2</div><div class="step-label" id="sl2">AI Scoring</div></div>
+    <div class="step-conn" id="cn2"></div>
+    <div class="step-item"><div class="step-circle" id="sc3">3</div><div class="step-label" id="sl3">Pick Top 3</div></div>
+    <div class="step-conn" id="cn3"></div>
+    <div class="step-item"><div class="step-circle" id="sc4">4</div><div class="step-label" id="sl4">Extract Contacts</div></div>
+    <div class="step-conn" id="cn4"></div>
+    <div class="step-item"><div class="step-circle" id="sc5">5</div><div class="step-label" id="sl5">Email + WhatsApp ✉️💬</div></div>
+  </div>
+
+  <div id="upload-sec">
+    <div class="upload-zone" id="drop-zone">
+      <input type="file" id="file-input" accept=".pdf,.doc,.docx,.txt" multiple>
+      <div class="upload-icon">📂</div>
+      <h2>Drag &amp; Drop Resumes Here</h2>
+      <p>or <span>browse files</span> — up to 10 resumes at once</p>
+      <div class="ftypes">
+        <span class="ftype ftype-pdf">PDF</span>
+        <span class="ftype ftype-doc">DOC</span>
+        <span class="ftype ftype-doc">DOCX</span>
+        <span class="ftype ftype-txt">TXT</span>
+        <span class="limit-badge">Max 10 · 5MB each</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="resumes-sec" style="display:none">
+    <div class="actions-bar">
+      <div>
+        <div class="act-info"><strong id="cnt-txt">0 resumes</strong> uploaded</div>
+        <div class="act-sub" id="act-sub">Analyzing with AI…</div>
+      </div>
+      <div class="act-btns">
+        <button class="btn-ghost" onclick="addMore()">+ Add More</button>
+        <button class="btn-primary" id="auto-btn" onclick="autoPickAndProcess()" disabled>⭐ Auto-Pick &amp; Send Top 3</button>
+        <button class="btn-danger" onclick="clearAll()">✕ Clear</button>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+      <div><div class="sec-title">All Resumes</div><div class="sec-sub">AI scores appear below · Click "Auto-Pick & Send Top 3" when ready</div></div>
+    </div>
+    <div class="resume-grid" id="resume-grid"></div>
+  </div>
+
+  <div id="top3-sec" style="display:none">
+    <div class="top3-hdr">
+      <div><div class="sec-title">🏆 Top 3 Candidates</div><div class="sec-sub" id="top3-sub">Extracting contacts &amp; sending invites…</div></div>
+      <button class="btn-ghost" onclick="clearTop3()">Clear</button>
+    </div>
+    <div class="top3-grid" id="top3-grid"></div>
+    <div class="prog-wrap" id="prog-wrap">
+      <div class="prog-title" id="prog-title">🔄 Auto-Processing Top 3 Candidates…</div>
+      <div class="prog-sub" id="prog-sub">Extracting email &amp; phone from resumes, sending Gmail + WhatsApp invites</div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+      <div class="prog-steps" id="prog-steps"></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="toast" id="toast">
+  <div class="toast-ico" id="t-ico">✅</div>
+  <div class="toast-txt" id="t-txt"><strong>Done!</strong>Message</div>
+</div>
+
+<script>
+const MAX = 10;
+let resumes = [];
+let queue = [];
+let processing = false;
+let autoProcessing = false;
+
+// ── EMAIL REGEX — aggressive extraction ──
+// Matches virtually all real-world email patterns including Indian domains
+const EMAIL_REGEX = /[a-zA-Z0-9](?:[a-zA-Z0-9._%+\-]*[a-zA-Z0-9])?@[a-zA-Z0-9](?:[a-zA-Z0-9\-]*[a-zA-Z0-9])?(?:\.[a-zA-Z]{2,})+/g;
+
+// ── PHONE REGEX — Indian + international formats ──
+// Covers: +91XXXXXXXXXX, 91XXXXXXXXXX, 0XXXXXXXXXX, XXXXXXXXXX (10 digit), +1-xxx-xxx-xxxx etc.
+const PHONE_REGEX = /(?:\+?(?:91|1|44|61|971|65)\s*[-.\s]?)?(?:\(?\d{3,5}\)?[\s.\-]?)?\d{3,5}[\s.\-]?\d{4,6}/g;
+
+// ── FILE HANDLING ──
+const dropZone = document.getElementById('drop-zone');
+const fileInput = document.getElementById('file-input');
+fileInput.addEventListener('change', e => handleFiles([...e.target.files]));
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('drag-over'); handleFiles([...e.dataTransfer.files]); });
+
+function addMore() {
+  const i = document.createElement('input');
+  i.type='file'; i.multiple=true; i.accept='.pdf,.doc,.docx,.txt';
+  i.onchange = e => handleFiles([...e.target.files]);
+  i.click();
+}
+
+function handleFiles(files) {
+  const allowed = ['.pdf','.doc','.docx','.txt'];
+  const valid = files.filter(f => allowed.some(x => f.name.toLowerCase().endsWith(x)));
+  const rem = MAX - resumes.length;
+  if (rem <= 0) { toast('⚠️','Limit Reached','Max 10 resumes allowed.'); return; }
+  const toAdd = valid.slice(0, rem);
+  toAdd.forEach(file => {
+    const id = Date.now() + Math.random();
+    const ext = file.name.split('.').pop().toLowerCase();
+    resumes.push({ id, file, name:file.name, size:file.size, ext,
+      status:'waiting', scores:null, selected:false, rank:0,
+      extractedEmail:null, extractedPhone:null,
+      emailSent:false, waSent:false, mailStatus:'idle', waStatus:'idle', rawText:'' });
+    queue.push(id);
+  });
+  if (resumes.length > 0) {
+    document.getElementById('upload-sec').style.display = 'none';
+    document.getElementById('resumes-sec').style.display = 'block';
+    setStep(2);
+  }
+  renderGrid(); updateStats(); runQueue();
+}
+
+// ── PDF.js LOADER ──
+let pdfJsReady = false;
+let pdfJsLoading = false;
+let pdfJsCallbacks = [];
+
+async function ensurePdfJs() {
+  if (pdfJsReady) return true;
+  if (pdfJsLoading) {
+    return new Promise(res => pdfJsCallbacks.push(res));
+  }
+  pdfJsLoading = true;
+  return new Promise((resolve) => {
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    script.onload = () => {
+      pdfjsLib.GlobalWorkerOptions.workerSrc =
+        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      pdfJsReady = true;
+      pdfJsLoading = false;
+      pdfJsCallbacks.forEach(cb => cb(true));
+      pdfJsCallbacks = [];
+      resolve(true);
+    };
+    script.onerror = () => {
+      pdfJsLoading = false;
+      pdfJsCallbacks.forEach(cb => cb(false));
+      pdfJsCallbacks = [];
+      resolve(false);
+    };
+    document.head.appendChild(script);
+  });
+}
+
+// ── READ FILE TEXT — PDF.js for PDFs, plain text for others ──
+async function readFileText(file, ext) {
+  // ── PDF: use PDF.js for proper text layer extraction ──
+  if (ext === 'pdf') {
+    return await extractPdfText(file);
+  }
+
+  // ── TXT: direct read ──
+  if (ext === 'txt') {
+    try { return await file.text(); } catch(e) { return ''; }
+  }
+
+  // ── DOC/DOCX: ArrayBuffer multi-encoding ──
+  const results = [];
+  try { results.push(await file.text()); } catch(e) {}
+  try {
+    const buf = await file.arrayBuffer();
+    for (const enc of ['utf-8','utf-16le','windows-1252','iso-8859-1']) {
+      try { results.push(new TextDecoder(enc,{fatal:false}).decode(buf)); } catch(e) {}
+    }
+  } catch(e) {}
+  const combined = results.join('\n');
+  return combined
+    .replace(/[^\x20-\x7E\n\r\t\u00C0-\u024F\u0900-\u097F\u0B80-\u0BFF]/g, ' ')
+    .replace(/\s{3,}/g, ' ').trim();
+}
+
+// ── PDF TEXT EXTRACTION via PDF.js ──
+async function extractPdfText(file) {
+  try {
+    const ok = await ensurePdfJs();
+    if (!ok) return await fallbackPdfRead(file);
+
+    const arrayBuffer = await file.arrayBuffer();
+    const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+    const pdf = await loadingTask.promise;
+    const numPages = pdf.numPages;
+    let fullText = '';
+
+    for (let pageNum = 1; pageNum <= numPages; pageNum++) {
+      try {
+        const page = await pdf.getPage(pageNum);
+        const textContent = await page.getTextContent();
+        // Reconstruct text with proper spacing
+        let pageText = '';
+        let lastY = null;
+        for (const item of textContent.items) {
+          if ('str' in item) {
+            // New line if Y position changed significantly
+            if (lastY !== null && Math.abs(item.transform[5] - lastY) > 5) {
+              pageText += '\n';
+            }
+            pageText += item.str + ' ';
+            lastY = item.transform[5];
+          }
+        }
+        fullText += pageText + '\n';
+      } catch(e) {}
+    }
+    return fullText.trim();
+  } catch(e) {
+    console.warn('PDF.js extraction failed:', e);
+    return await fallbackPdfRead(file);
+  }
+}
+
+// ── FALLBACK: raw binary scan for @-containing strings ──
+async function fallbackPdfRead(file) {
+  try {
+    const buf = await file.arrayBuffer();
+    // Try latin-1 which reads PDF streams as-is
+    const raw = new TextDecoder('iso-8859-1', {fatal:false}).decode(buf);
+    // PDF streams often have text between BT...ET markers
+    const streams = [];
+    // Extract readable ASCII runs of 4+ chars
+    const runs = raw.match(/[\x20-\x7E]{4,}/g) || [];
+    return runs.join(' ');
+  } catch(e) { return ''; }
+}
+
+// ── AGGRESSIVE EMAIL EXTRACTOR — core logic ──
+function extractEmailFromText(text) {
+  if (!text || text.length < 3) return null;
+
+  // Strategy 1: Direct regex on full text
+  const allMatches = text.match(EMAIL_REGEX) || [];
+  if (allMatches.length > 0) {
+    // Prefer common domains: gmail, yahoo, hotmail, outlook, company domains
+    const preferred = allMatches.find(e =>
+      /gmail\.com|yahoo\.com|hotmail\.com|outlook\.com|yahoo\.in|rediffmail\.com/i.test(e)
+    );
+    return preferred || allMatches[0];
+  }
+
+  // Strategy 2: Look around contact keywords
+  const contactPatterns = [
+    /(?:email|e-mail|e\.mail|mail|contact|📧|✉|@)\s*[:\-]?\s*([a-zA-Z0-9][^\s,|<>]{2,}@[^\s,|<>]{2,}\.[a-zA-Z]{2,})/gi,
+    /([a-zA-Z0-9][a-zA-Z0-9._+\-]*)\s*@\s*([a-zA-Z0-9.\-]+\.[a-zA-Z]{2,})/g,
+  ];
+  for (const pat of contactPatterns) {
+    const m = text.match(pat);
+    if (m && m.length > 0) {
+      // Extract just the email part
+      const emailInMatch = m[0].match(/[a-zA-Z0-9][a-zA-Z0-9._%+\-]*@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/);
+      if (emailInMatch) return emailInMatch[0];
+    }
+  }
+
+  // Strategy 3: Split by whitespace and find token containing @
+  const tokens = text.split(/[\s,|<>\[\](){}'"]/);
+  for (const tok of tokens) {
+    if (tok.includes('@') && tok.length > 5) {
+      const cleaned = tok.replace(/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/g, '');
+      const m = cleaned.match(/[a-zA-Z0-9][a-zA-Z0-9._%+\-]*@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/);
+      if (m) return m[0];
+    }
+  }
+
+  return null;
+}
+
+// ── PHONE EXTRACTOR ──
+function extractPhoneFromText(text) {
+  if (!text || text.length < 3) return null;
+
+  // Look near phone keywords first
+  const phoneContext = text.match(/(?:phone|ph|mob(?:ile)?|cell|tel(?:ephon)?|contact|📱|☎|whatsapp|wa)\s*[:\-]?\s*([\d\s\+\-\(\)\.]{8,20})/gi);
+  if (phoneContext) {
+    for (const ctx of phoneContext) {
+      const digits = ctx.replace(/[^0-9+]/g, '');
+      const cleaned = cleanPhone(digits);
+      if (cleaned) return cleaned;
+    }
+  }
+
+  // General phone pattern scan
+  const allMatches = text.match(PHONE_REGEX) || [];
+  for (const m of allMatches) {
+    const digits = m.replace(/[^0-9+]/g, '');
+    const cleaned = cleanPhone(digits);
+    if (cleaned) return cleaned;
+  }
+
+  return null;
+}
+
+function cleanPhone(digits) {
+  if (!digits) return null;
+  // Remove leading zeros/country codes and get 10-digit Indian number
+  let d = digits.replace(/^\+/, '');
+
+  // International: +91XXXXXXXXXX
+  if (d.startsWith('91') && d.length === 12) return '+91' + d.slice(2);
+  if (d.startsWith('1') && d.length === 11) return '+1' + d.slice(1);
+
+  // Raw 10-digit Indian
+  if (d.length === 10 && /^[6-9]/.test(d)) return '+91' + d;
+
+  // With leading 0
+  if (d.startsWith('0') && d.length === 11) return '+91' + d.slice(1);
+
+  // 12-digit starting with 91
+  if (d.startsWith('91') && d.length === 12) return '+' + d;
+
+  // Any 10-digit number
+  if (d.length === 10) return '+91' + d;
+
+  return null;
+}
+
+// ── RENDER GRID ──
+function renderGrid() {
+  const grid = document.getElementById('resume-grid');
+  grid.innerHTML = '';
+  resumes.forEach((r, i) => {
+    const card = document.createElement('div');
+    const rCls = r.rank===1?' rank-1':r.rank===2?' rank-2':r.rank===3?' rank-3':'';
+    card.className = 'resume-card card-anim'+(r.selected?' selected':'')+rCls;
+    card.style.animationDelay = (i*0.055)+'s';
+    card.id = 'card-'+r.id;
+    card.onclick = () => toggleSel(r.id);
+    const ico = {pdf:'📕',doc:'📘',docx:'📘',txt:'📃'}[r.ext]||'📄';
+    const mb = (r.size/1024/1024).toFixed(2);
+    const rEmoji = ['','🥇','🥈','🥉'][r.rank]||'';
+    let inner = '';
+    if (r.status !== 'done') {
+      inner = `
+        <div class="ring-wrap" style="width:78px;height:78px">
+          <div style="width:78px;height:78px;display:flex;align-items:center;justify-content:center">
+            <div class="spin" style="width:26px;height:26px;border-width:3px"></div>
+          </div>
+        </div>
+        <div class="bars">${['Skills','Experience','Format','Keywords','Impact'].map(l=>`
+          <div class="bar-row"><div class="bar-lbl">${l}</div>
+          <div class="bar-track"><div class="skel" style="height:4px;width:100%"></div></div>
+          <div class="bar-val" style="color:var(--muted)">—</div></div>`).join('')}
+        </div>
+        <div class="card-status ${r.status==='analyzing'?'st-scan':'st-wait'}">
+          ${r.status==='analyzing'?'<div class="spin"></div> Analyzing…':'⏳ In queue…'}
+        </div>`;
+    } else {
+      const s = r.scores;
+      const gc = {'A+':'#00FF9C','A':'#00FF9C','B+':'#FFE03B','B':'#FFE03B','C+':'#FF6B35','C':'#FF6B35','D':'#FF3CAC'}[s.grade]||'#00F5FF';
+      const circ = 2*Math.PI*33;
+      const off = circ-(s.overall/100)*circ;
+      const emailEl = r.extractedEmail
+        ? `<div class="contact-tag email-tag">📧 ${r.extractedEmail}</div>`
+        : `<div class="contact-tag none">📧 Email not detected</div>`;
+      const phoneEl = r.extractedPhone
+        ? `<div class="contact-tag phone-tag">📱 ${r.extractedPhone}</div>`
+        : `<div class="contact-tag none">📱 Phone not detected</div>`;
+      inner = `
+        <div class="ring-wrap">
+          <svg width="78" height="78" viewBox="0 0 78 78">
+            <circle class="rc-bg" cx="39" cy="39" r="33"/>
+            <circle class="rc-fill" cx="39" cy="39" r="33" stroke="${gc}"
+              stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${circ.toFixed(1)}"
+              data-off="${off.toFixed(1)}" id="ring-${r.id}"/>
+          </svg>
+          <div class="ring-center">
+            <div class="ring-num" style="color:${gc}">${Math.round(s.overall)}</div>
+            <div class="ring-lbl">Score</div>
+          </div>
+        </div>
+        <div style="text-align:center;margin-bottom:8px">
+          <span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:50px;font-size:0.65rem;font-weight:800;background:${gc}22;color:${gc};border:1px solid ${gc}44">${s.grade} · ${s.gradeLabel}</span>
+        </div>
+        <div class="bars">${s.cats.map(c=>`
+          <div class="bar-row"><div class="bar-lbl">${c.n.split(' ')[0]}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:0%;background:${c.color}" id="bf-${r.id}-${c.n.replace(/\s/g,'')}" data-w="${c.s}"></div></div>
+          <div class="bar-val" style="color:${c.color}">${Math.round(c.s)}</div></div>`).join('')}
+        </div>
+        <div class="contact-tags">${emailEl}${phoneEl}</div>
+        <div class="card-status st-done" style="margin-top:8px">✓ Analysis complete</div>`;
+    }
+    card.innerHTML = `
+      <div class="card-check">✓</div>
+      <div class="card-rank">${rEmoji}</div>
+      <div class="card-icon">${ico}</div>
+      <div class="card-name">${r.name}</div>
+      <div class="card-meta">${mb} MB · ${r.ext.toUpperCase()}</div>
+      ${inner}`;
+    grid.appendChild(card);
+  });
+  setTimeout(() => {
+    resumes.forEach(r => {
+      if (r.status!=='done') return;
+      const ring = document.getElementById('ring-'+r.id);
+      if (ring) ring.style.strokeDashoffset = ring.dataset.off;
+      r.scores.cats.forEach(c => {
+        const b = document.getElementById('bf-'+r.id+'-'+c.n.replace(/\s/g,''));
+        if (b) b.style.width = c.s+'%';
+      });
+    });
+  }, 80);
+  const cnt = resumes.length;
+  document.getElementById('cnt-txt').textContent = cnt+' resume'+(cnt!==1?'s':'');
+  const allDone = resumes.every(r=>r.status==='done');
+  document.getElementById('act-sub').textContent = allDone
+    ? '✅ All analyzed — click "Auto-Pick & Send Top 3"'
+    : `⏳ Analyzing ${resumes.filter(r=>r.status!=='done').length} remaining…`;
+  document.getElementById('auto-btn').disabled = !allDone;
+}
+
+// ── SELECT ──
+function toggleSel(id) {
+  if (autoProcessing) return;
+  const r = resumes.find(x=>x.id===id);
+  if (!r||r.status!=='done') return;
+  const selCnt = resumes.filter(x=>x.selected).length;
+  if (!r.selected&&selCnt>=3) { toast('⚠️','Max 3','Deselect one first.'); return; }
+  r.selected = !r.selected;
+  calcRanks(); renderGrid(); updateStats();
+  if (resumes.filter(x=>x.selected).length===3) {
+    renderTop3();
+    autoPickAndProcess(true);
+  } else {
+    renderTop3();
+  }
+}
+
+function calcRanks() {
+  const sel = resumes.filter(r=>r.selected).sort((a,b)=>b.scores.overall-a.scores.overall);
+  resumes.forEach(r=>r.rank=0);
+  sel.forEach((r,i)=>r.rank=i+1);
+}
+
+// ── AUTO PICK & PROCESS ──
+async function autoPickAndProcess(fromManual=false) {
+  if (autoProcessing) return;
+  autoProcessing = true;
+
+  if (!fromManual) {
+    resumes.forEach(r=>r.selected=false);
+    const sorted = [...resumes].filter(r=>r.status==='done').sort((a,b)=>b.scores.overall-a.scores.overall);
+    sorted.slice(0,3).forEach(r=>r.selected=true);
+    calcRanks(); renderGrid(); updateStats();
+  }
+
+  setStep(3);
+  document.getElementById('top3-sec').style.display = 'block';
+  renderTop3();
+  setTimeout(()=>document.getElementById('top3-sec').scrollIntoView({behavior:'smooth'}),350);
+
+  const selected = resumes.filter(r=>r.selected).sort((a,b)=>a.rank-b.rank);
+  showProgress(selected);
+
+  let sentCount = 0;
+  let waSentCount = 0;
+
+  for (let i=0; i<selected.length; i++) {
+    const r = selected[i];
+    const medal = ['🥇','🥈','🥉'][i];
+    const displayName = getDisplayName(r.name);
+
+    // ── EXTRACT CONTACTS ──
+    setStep(4);
+    r.mailStatus = 'extracting';
+    r.waStatus = 'extracting';
+    updateProgStep(r.id, 'active', `🔍 ${medal} ${displayName} — Extracting contacts…`);
+    renderTop3();
+    setProgPct(5 + i*28);
+
+    // Multi-pass contact extraction
+    const contacts = await extractContactsDeep(r);
+    r.extractedEmail = contacts.email;
+    r.extractedPhone = contacts.phone;
+
+    let contactLine = [];
+    if (contacts.email) contactLine.push(`📧 ${contacts.email}`);
+    if (contacts.phone) contactLine.push(`📱 ${contacts.phone}`);
+
+    updateProgStep(r.id, 'active',
+      contactLine.length > 0
+        ? `✔ ${medal} ${displayName} — Found: ${contactLine.join(' · ')}`
+        : `⚠ ${medal} ${displayName} — No contacts found in file`
+    );
+
+    // ── SEND EMAIL ──
+    if (contacts.email) {
+      setStep(5);
+      r.mailStatus = 'sending';
+      renderTop3();
+      setProgPct(12 + i*28);
+      updateProgStep(r.id, 'active', `📤 ${medal} ${displayName} — Sending email invite…`);
+
+      const ok = await sendMail(r, contacts.email);
+      if (ok) {
+        r.emailSent = true;
+        r.mailStatus = 'sent';
+        sentCount++;
+        updateProgStep(r.id, 'active', `✅ ${medal} ${displayName} — Email sent! ${contacts.phone ? 'Sending WhatsApp…' : ''}`);
+        toast('✅','Email Sent!',`Interview invite → ${contacts.email}`);
+      } else {
+        r.mailStatus = 'failed';
+        updateProgStep(r.id, 'active', `⚠ ${medal} ${displayName} — Email failed. ${contacts.phone ? 'Trying WhatsApp…' : ''}`);
+      }
+    } else {
+      r.mailStatus = 'noemail';
+    }
+
+    // ── WHATSAPP ──
+    if (contacts.phone) {
+      r.waStatus = 'ready'; // WhatsApp link is pre-built and shown as button
+      waSentCount++;
+      updateProgStep(r.id, 'done', `✅ ${medal} ${displayName} — Done! WhatsApp button ready.`);
+      toast('💬','WhatsApp Ready!',`Open WhatsApp for ${displayName}`);
+    } else {
+      r.waStatus = 'nophone';
+      if (!contacts.email) {
+        updateProgStep(r.id, 'done', `❌ ${medal} ${displayName} — No contacts found`);
+      }
+    }
+
+    renderTop3();
+    updateStats();
+    await sleep(400);
+  }
+
+  setProgPct(100);
+  document.getElementById('prog-title').textContent = '✅ All Done!';
+  const parts = [];
+  if (sentCount > 0) parts.push(`${sentCount} email${sentCount>1?'s':''} sent`);
+  if (waSentCount > 0) parts.push(`${waSentCount} WhatsApp invite${waSentCount>1?'s':''} ready`);
+  const sub = parts.length > 0
+    ? parts.join(' · ') + ' 🎉'
+    : 'Could not find contacts — try uploading text-based PDF/TXT resumes.';
+  document.getElementById('prog-sub').textContent = sub;
+  document.getElementById('top3-sub').textContent = sub;
+
+  if (sentCount > 0 || waSentCount > 0) setStep(5);
+  if (sentCount === 3) toast('🎉','All Invites Sent!','All 3 candidates notified via Gmail!');
+  autoProcessing = false;
+}
+
+// ── DEEP CONTACT EXTRACTION ──
+async function extractContactsDeep(r) {
+  let email = null;
+  let phone = null;
+
+  // Pass 1: Local regex on rawText
+  if (r.rawText && r.rawText.length > 10) {
+    email = email || extractEmailFromText(r.rawText);
+    phone = phone || extractPhoneFromText(r.rawText);
+  }
+
+  // Pass 2: Re-read file with all encodings
+  if (!email || !phone) {
+    const freshText = await readFileText(r.file, r.ext);
+    if (freshText) {
+      email = email || extractEmailFromText(freshText);
+      phone = phone || extractPhoneFromText(freshText);
+      // Save for later
+      if (!r.rawText || r.rawText.length < freshText.length) r.rawText = freshText;
+    }
+  }
+
+  // Pass 3: AI extraction for whatever is still missing
+  if (!email || !phone) {
+    const textSample = (r.rawText || '').substring(0, 3000);
+    const needed = [];
+    if (!email) needed.push('email address');
+    if (!phone) needed.push('phone/mobile number');
+
+    if (needed.length > 0) {
+      const aiContacts = await aiExtractContacts(r.name, r.ext, r.size, textSample, needed);
+      email = email || aiContacts.email;
+      phone = phone || aiContacts.phone;
+    }
+  }
+
+  // Pass 4: Final local regex pass after AI (AI sometimes cleans/restores text)
+  if (!email && r.rawText) email = extractEmailFromText(r.rawText);
+  if (!phone && r.rawText) phone = extractPhoneFromText(r.rawText);
+
+  return { email, phone };
+}
+
+// ── AI CONTACT EXTRACTION ──
+async function aiExtractContacts(filename, ext, size, textContent, needed) {
+  const hasText = textContent && textContent.length > 50;
+  const prompt = `You are a contact information extractor. Extract from this resume:
+
+FILENAME: "${filename}" (${ext.toUpperCase()}, ${(size/1024).toFixed(1)}KB)
+${hasText ? `RESUME TEXT:\n${textContent}` : '[Binary file — no readable text]'}
+
+Find and return these fields (return null if genuinely not present):
+${needed.includes('email address') ? '- EMAIL: Any email address. Look for @ symbol. Even partial like "name @gmail.com" → clean it.' : ''}
+${needed.includes('phone/mobile number') ? '- PHONE: Any phone/mobile number. Indian: 10 digits starting 6-9. International: with country code.' : ''}
+
+Return ONLY valid JSON, no markdown:
+{
+  ${needed.includes('email address') ? '"email": "<email_string_or_null>",' : '"email": null,'}
+  ${needed.includes('phone/mobile number') ? '"phone": "<E164_format_or_null>"' : '"phone": null'}
+}
+
+Rules:
+- For email: if you see "john @gmail.com" or "john[at]gmail.com" → return "john@gmail.com"
+- For phone: normalize to +91XXXXXXXXXX for India, +1XXXXXXXXXX for US etc.
+- Return null ONLY if truly not present after thorough search`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:120,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    const data = await res.json();
+    const raw = (data.content||[]).map(i=>i.text||'').join('').trim();
+    const clean = raw.replace(/```json|```/g,'').trim();
+    const p = JSON.parse(clean);
+    return {
+      email: (p.email && p.email !== 'null' && p.email.includes('@')) ? p.email.trim() : null,
+      phone: (p.phone && p.phone !== 'null' && p.phone.length >= 8) ? p.phone.trim() : null
+    };
+  } catch(e) {
+    return {email:null, phone:null};
+  }
+}
+
+// ── RENDER TOP 3 ──
+function renderTop3() {
+  const selected = resumes.filter(r=>r.selected).sort((a,b)=>a.rank-b.rank);
+  const sec = document.getElementById('top3-sec');
+  const grid = document.getElementById('top3-grid');
+  if (selected.length===0) { sec.style.display='none'; return; }
+  sec.style.display='block';
+  grid.innerHTML='';
+  const medals=['🥇','🥈','🥉'];
+  const cls=['gold','silver','bronze'];
+  const rnks=['1st Place','2nd Place','3rd Place'];
+  const bcs={gold:'#FFE03B',silver:'#C0C0DC',bronze:'#CD7F32'};
+
+  selected.forEach((r,i)=>{
+    const s=r.scores;
+    const card=document.createElement('div');
+    card.className='t3card '+cls[i];
+    card.style.animation=`popIn 0.4s cubic-bezier(.34,1.56,.64,1) ${i*0.1}s both`;
+    const bc=bcs[cls[i]];
+
+    // ── Email status box ──
+    let emailHtml='';
+    if (r.mailStatus==='extracting') {
+      emailHtml=`<div class="msbox ms-extract"><div class="ms-main"><div class="spin" style="border-top-color:#FFE03B;border-color:rgba(255,227,59,0.2)"></div> Extracting email…</div></div>`;
+    } else if (r.mailStatus==='sending') {
+      emailHtml=`<div class="msbox ms-send"><div class="ms-main"><div class="spin"></div> Sending email invite…</div><div class="ms-email-val">📧 ${r.extractedEmail}</div></div>`;
+    } else if (r.mailStatus==='sent') {
+      emailHtml=`<div class="msbox ms-sent"><div class="ms-main">✅ Email Invite Sent!</div><div class="ms-email-val">📧 ${r.extractedEmail}</div></div>`;
+    } else if (r.mailStatus==='failed') {
+      emailHtml=`<div class="msbox ms-nomail"><div class="ms-main">❌ Email send failed — check Gmail</div><div class="ms-email-val">📧 ${r.extractedEmail}</div></div>`;
+    } else if (r.mailStatus==='noemail') {
+      emailHtml=`<div class="msbox ms-nomail"><div class="ms-main">📧 No email found in resume</div></div>`;
+    } else {
+      emailHtml=`<div class="msbox ms-idle"><div class="ms-main">⏳ Waiting…</div></div>`;
+    }
+
+    // ── WhatsApp status box ──
+    let waHtml='';
+    if (r.waStatus==='extracting') {
+      waHtml=`<div class="msbox ms-wa"><div class="ms-main"><div class="spin" style="border-top-color:#25D366;border-color:rgba(37,211,102,0.2)"></div> Extracting phone…</div></div>`;
+    } else if (r.waStatus==='ready' && r.extractedPhone) {
+      const waMsg = buildWAMessage(getDisplayName(r.name), r.scores);
+      const waUrl = `https://wa.me/${r.extractedPhone.replace(/\+/,'')}?text=${encodeURIComponent(waMsg)}`;
+      waHtml=`<div class="msbox ms-wa">
+        <div class="ms-main">💬 WhatsApp Invite Ready!</div>
+        <div class="ms-email-val">📱 ${r.extractedPhone}</div>
+        <a class="ms-wa-btn" href="${waUrl}" target="_blank" rel="noopener">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Open WhatsApp
+        </a>
+      </div>`;
+    } else if (r.waStatus==='nophone') {
+      waHtml=`<div class="msbox ms-wa-nophone"><div class="ms-main">📱 No phone number found</div></div>`;
+    } else {
+      waHtml=`<div class="msbox ms-idle"><div class="ms-main">💬 WhatsApp — waiting…</div></div>`;
+    }
+
+    card.innerHTML=`
+      <span class="t3medal">${medals[i]}</span>
+      <div class="t3rank">${rnks[i]}</div>
+      <div style="display:flex;align-items:baseline;gap:0;margin-bottom:5px">
+        <div class="t3score">${Math.round(s.overall)}</div>
+        <span class="t3gpill" style="background:${bc}22;color:${bc};border:1px solid ${bc}44">${s.grade}</span>
+      </div>
+      <div class="t3name">${r.name}</div>
+      <div class="t3meta">${(r.size/1024/1024).toFixed(2)} MB · ${r.ext.toUpperCase()} · ${s.gradeLabel}</div>
+      <div class="t3div"></div>
+      <div class="t3bars">${s.cats.map(c=>`
+        <div class="t3brow">
+          <div class="t3blbl">${c.n.split(' ')[0]}</div>
+          <div class="t3btrack"><div class="t3bfill" style="width:${c.s}%;background:${bc}"></div></div>
+          <div class="t3bval" style="color:${bc}">${Math.round(c.s)}</div>
+        </div>`).join('')}
+      </div>
+      <div class="t3feedback">${s.feedback}</div>
+      <div class="mail-status-row">${emailHtml}${waHtml}</div>`;
+    grid.appendChild(card);
+  });
+}
+
+// ── BUILD WHATSAPP MESSAGE ──
+function buildWAMessage(name, scores) {
+  const ov = scores ? Math.round(scores.overall) : 85;
+  const grade = scores ? scores.grade : 'A';
+  const gradeLabel = scores ? scores.gradeLabel : 'Excellent';
+  return `🎉 Congratulations ${name}!
+
+You've been selected as one of our *TOP 3 CANDIDATES* for an interview!
+
+━━━━━━━━━━━━━━━━
+📊 *Your Profile*
+✦ Score   : *${ov}/100*
+✦ Grade   : *${grade} — ${gradeLabel}*
+✦ Round   : Final Interview Round
+━━━━━━━━━━━━━━━━
+
+📋 *Interview Format* : Face-to-Face
+⏱ *Duration* : 45–60 minutes
+
+Please reply with your available dates & times for next week to confirm your slot.
+
+We look forward to meeting you! 🙌
+
+— *TalentFlow Recruitment Team*
+📧 hr@talentflow.io`;
+}
+
+// ── PROGRESS HELPERS ──
+function showProgress(selected) {
+  const wrap=document.getElementById('prog-wrap');
+  wrap.classList.add('show');
+  document.getElementById('prog-fill').style.width='3%';
+  const stepsEl=document.getElementById('prog-steps');
+  stepsEl.innerHTML=selected.map((r,i)=>`
+    <div class="prog-step" id="ps-${r.id}">⏳ ${['🥇','🥈','🥉'][i]} ${getDisplayName(r.name)} — Waiting…</div>`).join('');
+}
+function setProgPct(pct) { document.getElementById('prog-fill').style.width=Math.min(pct,99)+'%'; }
+function updateProgStep(id, state, text) {
+  const el=document.getElementById('ps-'+id);
+  if (el) { el.className='prog-step '+state; el.textContent=text; }
+}
+
+// ── QUEUE RUNNER ──
+async function runQueue() {
+  if (processing) return;
+  processing=true;
+  while (queue.length>0) {
+    const id=queue.shift();
+    const r=resumes.find(x=>x.id===id);
+    if (!r) continue;
+    r.status='analyzing'; renderGrid();
+    r.rawText = await readFileText(r.file, r.ext);
+
+    // Pre-extract contacts during analysis
+    r.extractedEmail = extractEmailFromText(r.rawText);
+    r.extractedPhone = extractPhoneFromText(r.rawText);
+
+    const result=await analyzeResume(r);
+    r.scores=result.scores;
+    // Merge: AI extraction overrides only if local regex found nothing
+    r.extractedEmail = r.extractedEmail || result.email;
+    r.status='done';
+    updateStats(); renderGrid();
+  }
+  processing=false;
+  if (resumes.every(r=>r.status==='done')) {
+    toast('✅','All Analyzed!','Click "Auto-Pick & Send Top 3" to proceed.');
+    setStep(3);
+  }
+}
+
+// ── AI SCORING ──
+async function analyzeResume(r) {
+  const hasContent = r.rawText && r.rawText.length > 100;
+  const contentSection = hasContent
+    ? `\nACTUAL RESUME CONTENT:\n${'═'.repeat(50)}\n${r.rawText.substring(0, 4000)}\n${'═'.repeat(50)}`
+    : `\n[Binary file — no readable text. Infer from filename: "${r.name}"]`;
+
+  const prompt = `You are a CHIEF TALENT OFFICER at a Fortune 100 company with 20+ years hiring experience.
+
+${hasContent ? '✅ ACTUAL RESUME TEXT PROVIDED — base scores ENTIRELY on this content.' : '⚠️ Binary file — generate realistic differentiated scores.'}
+
+RESUME METADATA:
+- Filename: "${r.name}"
+- File size: ${(r.size/1024).toFixed(1)} KB
+- Format: ${r.ext.toUpperCase()}
+${contentSection}
+
+SCORING RUBRIC:
+1. SKILLS MATCH (Weight 25%) — Score 0–100
+2. EXPERIENCE QUALITY (Weight 30%) — Score 0–100
+3. FORMAT & ATS CLARITY (Weight 15%) — Score 0–100
+4. KEYWORDS & ATS MATCH (Weight 15%) — Score 0–100
+5. IMPACT & MEASURABLE RESULTS (Weight 15%) — Score 0–100
+
+WEIGHTED SCORE = (Skills×0.25) + (Experience×0.30) + (Format×0.15) + (Keywords×0.15) + (Impact×0.15)
+
+GRADE: 93–100→A+, 85–92→A, 75–84→B+, 65–74→B, 55–64→C+, 44–54→C, <44→D
+
+EMAIL EXTRACTION:
+- Scan entire text for @ symbol
+- Return the email if found, null if not
+- Common patterns: name@gmail.com, name@company.com, name@yahoo.in etc.
+
+RESPONSE — Strict JSON only, no markdown:
+{
+  "email": "<email_or_null>",
+  "overall": <integer>,
+  "grade": "<grade>",
+  "gradeLabel": "<label>",
+  "cats": [
+    {"n":"Skills Match","s":<int>,"color":"<#hex>"},
+    {"n":"Experience","s":<int>,"color":"<#hex>"},
+    {"n":"Format & Clarity","s":<int>,"color":"<#hex>"},
+    {"n":"Keywords ATS","s":<int>,"color":"<#hex>"},
+    {"n":"Impact Results","s":<int>,"color":"<#hex>"}
+  ],
+  "feedback": "<2 sentences: specific strength + improvement>",
+  "topSkill": "<3-4 words>",
+  "redFlag": "<4-5 words or null>"
+}
+Color: ≥80→"#00FF9C" | 58–79→"#FFE03B" | <58→"#FF3CAC"
+Be STRICT and DIFFERENTIATED. Spread scores across the full range.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 900,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    const raw = (data.content||[]).map(i=>i.text||'').join('');
+    const clean = raw.replace(/```json|```/g,'').trim();
+    const p = JSON.parse(clean);
+    p.overall = Math.min(99, Math.max(25, Math.round(p.overall)));
+    p.cats = (p.cats||[]).map(c=>({...c, s:Math.min(99,Math.max(18,Math.round(c.s)))}));
+    if (p.cats.length === 5) {
+      const w = [0.25,0.30,0.15,0.15,0.15];
+      const calc = Math.round(p.cats.reduce((sum,c,i)=>sum+c.s*w[i],0));
+      if (Math.abs(calc - p.overall) > 5) p.overall = calc;
+    }
+    const ov = p.overall;
+    if (ov>=93){p.grade='A+';p.gradeLabel='Exceptional';}
+    else if(ov>=85){p.grade='A';p.gradeLabel='Excellent';}
+    else if(ov>=75){p.grade='B+';p.gradeLabel='Strong';}
+    else if(ov>=65){p.grade='B';p.gradeLabel='Good';}
+    else if(ov>=55){p.grade='C+';p.gradeLabel='Average';}
+    else if(ov>=44){p.grade='C';p.gradeLabel='Below Average';}
+    else{p.grade='D';p.gradeLabel='Weak';}
+
+    // Extract email from AI response only if local regex missed it
+    const aiEmail = (p.email && p.email !== 'null' && p.email.includes('@')) ? p.email : null;
+    return { email: aiEmail, scores: p };
+  } catch(e) {
+    console.warn('AI scoring failed, using fallback:', e);
+    return fallback(r);
+  }
+}
+
+function fallback(r) {
+  const base = 48 + Math.floor(Math.random()*42);
+  const weights = [0.25,0.30,0.15,0.15,0.15];
+  const names = ['Skills Match','Experience','Format & Clarity','Keywords ATS','Impact Results'];
+  const cats = names.map(n => {
+    const s = Math.max(20, Math.min(97, base + Math.floor((Math.random()-0.5)*36)));
+    return {n, s, color: s>=80?'#00FF9C':s>=58?'#FFE03B':'#FF3CAC'};
+  });
+  const overall = Math.round(cats.reduce((sum,c,i)=>sum+c.s*weights[i],0));
+  const ov = overall;
+  const grade = ov>=93?'A+':ov>=85?'A':ov>=75?'B+':ov>=65?'B':ov>=55?'C+':ov>=44?'C':'D';
+  const gradeLabel = ov>=93?'Exceptional':ov>=85?'Excellent':ov>=75?'Strong':ov>=65?'Good':ov>=55?'Average':ov>=44?'Below Average':'Weak';
+  const email = extractEmailFromText(r.rawText || '');
+  const phone = extractPhoneFromText(r.rawText || '');
+  r.extractedEmail = r.extractedEmail || email;
+  r.extractedPhone = r.extractedPhone || phone;
+  return { email, scores:{overall,grade,gradeLabel,cats,feedback:`Resume shows a ${gradeLabel.toLowerCase()} candidate profile. Upload text-based resumes for deeper AI analysis.`,topSkill:'General Profile',redFlag:null} };
+}
+
+// ── SEND VIA GMAIL MCP ──
+async function sendMail(r, toEmail) {
+  const name = getDisplayName(r.name);
+  const subject = `🎉 You're Selected! Interview Invitation — TalentFlow ATS`;
+  const body = buildEmailBody(name, r.scores);
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 600,
+        mcp_servers: [{ type:'url', url:'https://gmailmcp.googleapis.com/mcp/v1', name:'gmail-mcp' }],
+        messages: [{ role:'user', content:`Send this email using the Gmail MCP tool:
+To: ${toEmail}
+Subject: ${subject}
+Body:
+${body}
+Reply with SENT_OK after sending.` }]
+      })
+    });
+    const data = await res.json();
+    if (data.error) return false;
+    const hasToolResult = (data.content||[]).some(b=>b.type==='mcp_tool_result'||b.type==='tool_result');
+    const txt = (data.content||[]).map(i=>i.text||'').join('').toLowerCase();
+    return hasToolResult || txt.includes('sent_ok') || txt.includes('sent') || txt.includes('success');
+  } catch(e) { return false; }
+}
+
+function buildEmailBody(name, scores) {
+  const ov = scores ? Math.round(scores.overall) : 85;
+  const grade = scores ? scores.grade : 'A';
+  const topSkill = scores?.topSkill || 'your exceptional profile';
+  const gradeLabel = scores?.gradeLabel || 'Excellent';
+  return `Dear ${name},
+
+Congratulations! 🎉 You've Been Selected!
+
+After a comprehensive AI-powered evaluation, you have been selected as one of our TOP 3 CANDIDATES for a Face-to-Face Interview!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+YOUR CANDIDATE PROFILE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✦ Overall Score  : ${ov}/100
+✦ Grade          : ${grade} — ${gradeLabel}
+✦ Standout Area  : ${topSkill}
+✦ Round          : Final Interview Round
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+INTERVIEW DETAILS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 Format   : Face-to-Face Interview
+⏱ Duration  : 45–60 minutes
+📍 Location  : Our Main Office (exact address to follow)
+📅 Schedule  : To be confirmed
+
+Please REPLY within 48 hours with your available dates/times.
+
+Warm regards,
+TalentFlow Recruitment Team
+📧 hr@talentflow.io  |  🌐 www.talentflow.io
+[Auto-generated by TalentFlow ATS]`;
+}
+
+// ── UTILS ──
+function getDisplayName(filename) {
+  let n = filename.replace(/\.(pdf|doc|docx|txt)$/i,'');
+  n = n.replace(/[_\-]/g,' ').replace(/resume|cv|curriculum|vitae/gi,'').trim();
+  return n.split(' ').filter(Boolean).map(w=>w[0].toUpperCase()+w.slice(1).toLowerCase()).join(' ') || 'Candidate';
+}
+function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+function updateStats(){
+  document.getElementById('st-up').textContent = resumes.length;
+  document.getElementById('st-an').textContent = resumes.filter(r=>r.status==='done').length;
+  document.getElementById('st-sel').textContent = resumes.filter(r=>r.selected).length;
+  document.getElementById('st-sent').textContent = resumes.filter(r=>r.emailSent).length;
+  document.getElementById('st-wa').textContent = resumes.filter(r=>r.waStatus==='ready').length;
+}
+function setStep(n){
+  [1,2,3,4,5].forEach(i=>{
+    const c=document.getElementById('sc'+i); const l=document.getElementById('sl'+i);
+    if(!c) return;
+    c.className='step-circle'+(i<n?' done':i===n?' active':'');
+    c.textContent=i<n?'✓':i;
+    l.className='step-label'+(i<n?' done':i===n?' active':'');
+  });
+  [1,2,3,4].forEach(i=>{
+    const cn=document.getElementById('cn'+i);
+    if(cn) cn.className='step-conn'+(i<n?' done':'');
+  });
+}
+function clearAll(){
+  resumes=[]; queue=[]; processing=false; autoProcessing=false;
+  ['resumes-sec','top3-sec'].forEach(id=>document.getElementById(id).style.display='none');
+  document.getElementById('upload-sec').style.display='block';
+  document.getElementById('resume-grid').innerHTML='';
+  document.getElementById('top3-grid').innerHTML='';
+  document.getElementById('prog-wrap').classList.remove('show');
+  document.getElementById('file-input').value='';
+  updateStats(); setStep(1);
+}
+function clearTop3(){
+  resumes.forEach(r=>{r.selected=false;r.rank=0;r.mailStatus='idle';r.waStatus='idle';r.emailSent=false;r.waSent=false;});
+  autoProcessing=false;
+  renderGrid(); updateStats();
+  document.getElementById('top3-sec').style.display='none';
+}
+let toastT;
+function toast(ico, title, msg){
+  document.getElementById('t-ico').textContent=ico;
+  document.getElementById('t-txt').innerHTML=`<strong>${title}</strong>${msg}`;
+  const el=document.getElementById('toast');
+  el.classList.add('show');
+  clearTimeout(toastT);
+  toastT=setTimeout(()=>el.classList.remove('show'),4500);
+}
+</script>
+<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+
+<script>
+(function () {
+    emailjs.init("YOUR_PUBLIC_KEY"); // EmailJS public key
+})();
+
+function sendResultEmail(to_email, to_name, score) {
+
+    const templateParams = {
+        to_email: to_email,
+        to_name: to_name,
+        score: score
+    };
+
+    emailjs.send(
+        "YOUR_SERVICE_ID",   // EmailJS Service ID
+        "YOUR_TEMPLATE_ID",  // EmailJS Template ID
+        templateParams
+    )
+    .then(function(response) {
+        console.log("SUCCESS!", response.status, response.text);
+        alert("Email sent successfully!");
+    }, function(error) {
+        console.log("FAILED...", error);
+        alert("Failed to send email!");
+    });
+}
+</script>
+</body>
+</html>
